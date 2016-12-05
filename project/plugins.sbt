@@ -1,5 +1,6 @@
+
 // Comment to get more information during initialization
-logLevel := Level.Debug
+logLevel := sbt.Level.Info
 
 // The Play plugin
 addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.5.9")

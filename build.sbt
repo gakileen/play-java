@@ -27,5 +27,6 @@ libraryDependencies ++= Seq(
   "com.alibaba" % "dubbo" % "2.5.3",
   "com.github.sgroschupf" % "zkclient" % "0.1",
   "org.influxdb" % "influxdb-java" % "2.2",
+  "org.elasticsearch" % "elasticsearch" % "2.2.1",
   ("biz.paluch.redis" % "lettuce" % "4.1.1.Final" classifier "shaded").exclude("io.netty", "netty-common").exclude("io.netty", "netty-transport").exclude("com.google.guava", "guava").exclude("org.apache.commons", "commons-pool2")
 )

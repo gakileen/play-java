@@ -3,11 +3,11 @@
 # ~~~~
 
 # An example controller showing a sample home page
-GET     /                           controllers.HomeController.index
+GET     /                           demo.controllers.HomeController.index
 # An example controller showing how to use dependency injection
-GET     /count                      controllers.CountController.count
+GET     /count                      demo.controllers.CountController.count
 # An example controller showing how to write asynchronous code
-GET     /message                    controllers.AsyncController.message
+GET     /message                    demo.controllers.AsyncController.message
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
@@ -15,14 +15,16 @@ GET     /assets/*file               controllers.Assets.versioned(path="/public",
 
 
 
-POST    /test/testValidData         ac.controllers.TestController.testValidData
-POST    /test/schedule              ac.controllers.TestController.schedule
-GET     /test/excel                 ac.controllers.TestController.excel
-GET     /test/dubbo                 ac.controllers.TestController.dubbo
+POST    /test/testValidData         controllers.TestController.testValidData
+POST    /test/schedule              controllers.TestController.schedule
+GET     /test/excel                 controllers.TestController.excel
+GET     /test/dubbo                 controllers.TestController.dubbo
 
 
-GET     /test/redis/set             ac.controllers.TestController.redisSet(key:String, value:String)
-GET     /test/redis/get             ac.controllers.TestController.redisGet(key:String)
+GET     /test/redis/set             controllers.TestController.redisSet(key:String, value:String)
+GET     /test/redis/get             controllers.TestController.redisGet(key:String)
 
 
-GET     /test/search                ac.controllers.TestController.search(question:String)
+GET     /test/search                controllers.TestController.search(question:String)
+GET     /test/ws                    controllers.TestController.ws()
+GET     /test/ws                    controllers.TestController.ws()
