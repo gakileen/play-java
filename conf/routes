@@ -27,4 +27,4 @@ GET     /test/redis/get             controllers.TestController.redisGet(key:Stri
 
 GET     /test/search                controllers.TestController.search(question:String)
 GET     /test/ws                    controllers.TestController.ws()
-GET     /test/ws                    controllers.TestController.ws()
+GET     /test/mysql                 controllers.TestController.mysql(gid: Int, uid: String)

@@ -1,15 +1,16 @@
 package controllers;
 
-import models.Test;
-import helpers.WishesDto;
-import models.dubbo.consumer.DubboConsumerHelper;
-import models.dubbo.provider.DubboProviderHelper;
-import models.redisCluster.RedisCluster;
-import models.ws.WsTest;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import common.utils.Log;
+import helpers.WishesDto;
+import models.Test;
+import models.dubbo.consumer.DubboConsumerHelper;
+import models.dubbo.provider.DubboProviderHelper;
+import models.mysql.GroupMember;
+import models.redisCluster.RedisCluster;
+import models.ws.WsTest;
 import org.bson.Document;
 import play.data.Form;
 import play.data.FormFactory;
@@ -19,6 +20,7 @@ import play.mvc.Result;
 import javax.inject.Inject;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.Set;
 import java.util.concurrent.CompletionStage;
 
 /**
@@ -137,5 +139,13 @@ public class TestController extends Controller {
             return ok(jsonNode);
         });
     }
+
+    public Result mysql(int gid, String uid) {
+		Set<Integer> set = GroupMember.getGidsByUid(uid);
+
+		System.out.println(set);
+
+		return ok();
+	}
 
 }

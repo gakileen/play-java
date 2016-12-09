@@ -1,8 +1,9 @@
+
 name := """play-java"""
 
 version := "1.0-SNAPSHOT"
 
-lazy val root = (project in file(".")).enablePlugins(PlayJava)
+lazy val root = (project in file(".")).enablePlugins(PlayJava, PlayEbean)
 
 scalaVersion := "2.11.7"
 
@@ -16,6 +17,8 @@ libraryDependencies ++= Seq(
   "org.apache.bval" % "bval-jsr303" % "0.5",
   "org.apache.commons" % "commons-lang3" % "3.3.2",
   "org.mongodb" % "mongo-java-driver" % "3.2.2",
+  "org.mongodb" % "mongodb-driver-async" % "3.2.2",
+  "mysql" % "mysql-connector-java" % "5.1.40",
   "com.qiniu" % "sdk" % "6.1.7",
   "org.apache.httpcomponents" % "httpclient" % "4.5.2",
   "org.apache.httpcomponents" % "httpcore" % "4.4.4",
@@ -28,5 +31,6 @@ libraryDependencies ++= Seq(
   "com.github.sgroschupf" % "zkclient" % "0.1",
   "org.influxdb" % "influxdb-java" % "2.2",
   "org.elasticsearch" % "elasticsearch" % "2.2.1",
+  "org.mockito" % "mockito-core" % "2.2.11" % "test",
   ("biz.paluch.redis" % "lettuce" % "4.1.1.Final" classifier "shaded").exclude("io.netty", "netty-common").exclude("io.netty", "netty-transport").exclude("com.google.guava", "guava").exclude("org.apache.commons", "commons-pool2")
 )
