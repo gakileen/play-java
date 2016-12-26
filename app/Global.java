@@ -21,6 +21,8 @@ public class Global extends GlobalSettings {
     @Override
     public void onStop(Application app) {
 
+		Log.i(TAG, "onStop ");
+
         QuartzScheduler.shutdown();
 
     }

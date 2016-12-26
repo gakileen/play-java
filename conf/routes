@@ -28,3 +28,6 @@ GET     /test/redis/get             controllers.TestController.redisGet(key:Stri
 GET     /test/search                controllers.TestController.search(question:String)
 GET     /test/ws                    controllers.TestController.ws()
 GET     /test/mysql                 controllers.TestController.mysql(gid: Int, uid: String)
+GET     /test/mysql_rand            controllers.TestController.mysql_rand(gid: Int, uid: String)
+GET     /test/parallelStream        controllers.TestController.parallelStream()
+GET     /test/future                controllers.TestController.future()

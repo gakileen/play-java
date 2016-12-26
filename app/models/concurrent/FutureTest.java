@@ -1,122 +1,134 @@
 package models.concurrent;
 
+import akka.actor.ActorSystem;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import common.utils.Log;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.ForkJoinPool;
 
 /**
- * Created by acmac on 2016/11/28.
+ * Created by acmac on 2016/12/21.
  */
+@Singleton
 public class FutureTest {
-    private static final String TAG = FutureTest.class.getSimpleName();
+
+	private static final String TAG = FutureTest.class.getSimpleName();
+
+	@Inject
+	private ActorSystem actorSystem;
+
+	public void test1() {
+
+		Set<Thread> threadSet = new CopyOnWriteArraySet<>();
+
+		for (int i = 0; i < 100000; i++) {
+			CompletableFuture.supplyAsync(() -> {
+				Thread thread = Thread.currentThread();
+				threadSet.add(thread);
+				return null;
+			});
+		}
+
+		Log.i(TAG, "test1", "threadSet一共有" + threadSet.size() + "个线程");
+		Log.i(TAG, "test1", threadSet);
+	}
+
+	public void test2() {
+
+		Set<Thread> threadSet = new CopyOnWriteArraySet<>();
+
+		for (int i = 0; i < 100000; i++) {
+			CompletableFuture.supplyAsync(() -> {
+				Thread thread = Thread.currentThread();
+				threadSet.add(thread);
+				return null;
+			}, actorSystem.dispatcher());
+		}
+
+		Log.i(TAG, "test2", "threadSet一共有" + threadSet.size() + "个线程");
+		Log.i(TAG, "test2", threadSet);
+	}
 
 
 
-    public static void testCompose() {
-        Function<Integer, Integer> times2 = e -> e * 2;
-        Function<Integer, Integer> squared = e -> e * e;
 
+	public void test3() {
+		Set<Thread> threadSet = new CopyOnWriteArraySet<>();
 
-        Log.i(TAG, "r1", times2.compose(squared).apply(4));
+		for (int i = 0; i < 100000; i++) {
+			CompletableFuture<Integer> future = new CompletableFuture<>();
+			future.complete(i);
 
-        Log.i(TAG, "r1", times2.andThen(squared).apply(4));
-    }
+			future.thenApply(value -> {
+				Thread thread = Thread.currentThread();
+				threadSet.add(thread);
+				return null;
+			});
+		}
 
+		Log.i(TAG, "test3", "threadSet一共有" + threadSet.size() + "个线程");
+		Log.i(TAG, "test3", threadSet);
+	}
 
-    public static void testBiFunction(String[] args) {
+	public void test4() {
+		Set<Thread> threadSet = new CopyOnWriteArraySet<>();
 
-        BiFunction<String, List<Article>, List<Article>> byAuthor =
-                (name, articles) -> articles.stream()
-                        .filter(a -> a.getAuthor().equals(name))
-                        .collect(Collectors.toList());
+		for (int i = 0; i < 100000; i++) {
+			CompletableFuture<Integer> future = new CompletableFuture<>();
+			future.complete(i);
 
-        BiFunction<String, List<Article>, List<Article>> byTag =
-                (tag, articles) -> articles.stream()
-                        .filter(a -> a.getTags().contains(tag))
-                        .collect(Collectors.toList());
+			future.thenApplyAsync(value -> {
+				Thread thread = Thread.currentThread();
+				threadSet.add(thread);
+				return null;
+			});
+		}
 
+		Log.i(TAG, "test4", "threadSet一共有" + threadSet.size() + "个线程");
+		Log.i(TAG, "test4", threadSet);
+	}
 
-        Function<List<Article>, List<Article>> sortByDate =
-                articles -> articles.stream()
-                        .sorted((x, y) -> y.published().compareTo(x.published()))
-                        .collect(Collectors.toList());
+	public void test5() {
 
-        Function<List<Article>, Optional<Article>> first =
-                a -> a.stream().findFirst();
+		System.out.println("-------------" + ForkJoinPool.getCommonPoolParallelism());
 
+		CompletableFuture<Integer> future = new CompletableFuture<>();
+		future.complete(1);
 
-        Function<List<Article>, Optional<Article>> newest =
-                first.compose(sortByDate);
-
-        BiFunction<String, List<Article>, Optional<Article>> newestByAuthor =
-                byAuthor.andThen(newest);
-
-        BiFunction<String, List<Article>, List<Article>> byAuthorSorted =
-                byAuthor.andThen(sortByDate);
-
-        BiFunction<String, List<Article>, Optional<Article>> newestByTag =
-                byTag.andThen(newest);
-    }
-
-    public static void testFuture() throws ExecutionException, InterruptedException {
-        Log.i(TAG, "start");
-        long t1 = System.currentTimeMillis();
-
-        CompletableFuture<String> f1 = CompletableFuture.supplyAsync(() -> {
-            try {
-                Thread.sleep(3000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            Log.i(TAG, "f1", Thread.currentThread().getName());
-            return "1";
-        });
-
-        CompletableFuture<String> f2 = CompletableFuture.supplyAsync(() -> {
-            try {
-                Thread.sleep(3000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            Log.i(TAG, "f2", Thread.currentThread().getName());
-            return "2";
-        });
-
-        CompletableFuture<String> f3 = CompletableFuture.supplyAsync(() -> {
-            try {
-                Thread.sleep(3000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            Log.i(TAG, "f3", Thread.currentThread().getName());
-            return "3";
-        });
-
-        CompletableFuture<String> f123 = f1.thenCombine(f2, (a, b) -> a + b)
-                .thenCombine(f3, (a, b) -> a + b);
-
-
-        Log.i(TAG, "get", f123.get());
-
-        Log.i(TAG, "used", System.currentTimeMillis() - t1);
-        Log.i(TAG, "end");
-
-
-    }
-
-    public static void main(String[] args) throws ExecutionException, InterruptedException {
-        testFuture();
-    }
-}
-
-class Article {
-    String getAuthor() {return null;}
-    String getTags() {return null;}
-    Integer published() {return 1;}
+		future.thenApply(value -> {
+			System.out.println("thenApply       " + value + "  " + Thread.currentThread().getName());
+			return value + 1;
+		}).thenApplyAsync(value -> {
+			System.out.println("thenApplyAsync  " + value + "  " + Thread.currentThread().getName());
+			return value + 1;
+		}).thenApply(value -> {
+			System.out.println("thenApply       " + value + "  " + Thread.currentThread().getName());
+			return value + 1;
+		}).thenApplyAsync(value -> {
+			System.out.println("thenApplyAsync  " + value + "  " + Thread.currentThread().getName());
+			return value + 1;
+		}).thenApply(value -> {
+			System.out.println("thenApply       " + value + "  " + Thread.currentThread().getName());
+			return value + 1;
+		}).thenApplyAsync(value -> {
+			System.out.println("thenApplyAsync  " + value + "  " + Thread.currentThread().getName());
+			return value + 1;
+		}).thenApply(value -> {
+			System.out.println("thenApply       " + value + "  " + Thread.currentThread().getName());
+			return value + 1;
+		}).thenApplyAsync(value -> {
+			System.out.println("thenApplyAsync  " + value + "  " + Thread.currentThread().getName());
+			return value + 1;
+		}).thenApply(value -> {
+			System.out.println("thenApply       " + value + "  " + Thread.currentThread().getName());
+			return value + 1;
+		}).thenApplyAsync(value -> {
+			System.out.println("thenApplyAsync  " + value + "  " + Thread.currentThread().getName());
+			return value + 1;
+		});
+	}
 }

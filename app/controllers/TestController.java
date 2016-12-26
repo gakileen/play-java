@@ -1,11 +1,14 @@
 package controllers;
 
+import com.google.inject.Singleton;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import common.utils.Log;
 import helpers.WishesDto;
 import models.Test;
+import models.concurrent.FutureTest;
+import models.concurrent.ParallelStreamTest;
 import models.dubbo.consumer.DubboConsumerHelper;
 import models.dubbo.provider.DubboProviderHelper;
 import models.mysql.GroupMember;
@@ -20,12 +23,14 @@ import play.mvc.Result;
 import javax.inject.Inject;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletionStage;
 
 /**
  * Created by acmac on 2016/05/05.
  */
+@Singleton
 public class TestController extends Controller {
 
     private static final String TAG = TestController.class.getSimpleName();
@@ -38,6 +43,9 @@ public class TestController extends Controller {
 
     @Inject
     WsTest wsTest;
+
+	@Inject
+	FutureTest futureTest;
 
     public Result testValidData() {
 
@@ -140,11 +148,31 @@ public class TestController extends Controller {
         });
     }
 
-    public Result mysql(int gid, String uid) {
-		Set<Integer> set = GroupMember.getGidsByUid(uid);
+    public Result mysql(long gid, String uid) {
+		Set<Long> set = GroupMember.getGidsByUid(uid);
 
 		System.out.println(set);
 
+		return ok();
+	}
+
+	public Result mysql_rand(long gid, String uid) {
+		List<Long> set = GroupMember.rand(uid);
+
+		System.out.println(set);
+
+		return ok();
+	}
+
+	public Result parallelStream() throws Exception {
+		ParallelStreamTest.main(null);
+		return ok();
+	}
+
+	public Result future() throws Exception {
+		Log.i(TAG, "future5");
+
+		futureTest.test5();
 		return ok();
 	}
 
