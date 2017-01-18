@@ -34,5 +34,6 @@ libraryDependencies ++= Seq(
   "org.mockito" % "mockito-core" % "2.2.11" % "test",
   "io.gatling.highcharts" % "gatling-charts-highcharts" % "2.2.3",
   "io.netty" % "netty-all" % "4.1.6.Final",
+  "com.maxmind.geoip2" % "geoip2" % "2.8.0",
   ("biz.paluch.redis" % "lettuce" % "4.1.1.Final" classifier "shaded").exclude("io.netty", "netty-common").exclude("io.netty", "netty-transport").exclude("com.google.guava", "guava").exclude("org.apache.commons", "commons-pool2")
 )
