@@ -32,5 +32,7 @@ libraryDependencies ++= Seq(
   "org.influxdb" % "influxdb-java" % "2.2",
   "org.elasticsearch" % "elasticsearch" % "2.2.1",
   "org.mockito" % "mockito-core" % "2.2.11" % "test",
+  "io.gatling.highcharts" % "gatling-charts-highcharts" % "2.2.3",
+  "io.netty" % "netty-all" % "4.1.6.Final",
   ("biz.paluch.redis" % "lettuce" % "4.1.1.Final" classifier "shaded").exclude("io.netty", "netty-common").exclude("io.netty", "netty-transport").exclude("com.google.guava", "guava").exclude("org.apache.commons", "commons-pool2")
 )

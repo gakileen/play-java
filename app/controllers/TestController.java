@@ -17,6 +17,7 @@ import models.ws.WsTest;
 import org.bson.Document;
 import play.data.Form;
 import play.data.FormFactory;
+import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
 
@@ -173,6 +174,62 @@ public class TestController extends Controller {
 		Log.i(TAG, "future5");
 
 		futureTest.test5();
+		return ok();
+	}
+
+	public Result json() {
+		return ok(Json.newArray());
+	}
+
+	public Result sleeping() throws Exception {
+		Thread.sleep(10000);
+		return ok();
+	}
+
+	public Result sleeping2() throws Exception {
+		int a = 1;
+
+		while(a > 0) {
+			Thread.sleep(10000);
+		}
+		return ok();
+	}
+
+	public Result sleeping3() throws Exception {
+
+		new Thread(() -> {
+			int a = 1;
+
+			while(a > 0) {
+				try {
+					Thread.sleep(10000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}).start();
+
+		return ok();
+	}
+
+	public Result sleeping4() throws Exception {
+
+		Thread t = new Thread(() -> {
+			int a = 1;
+
+			while(a > 0) {
+				try {
+					Thread.sleep(10000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+
+		t.start();
+
+		t.join();
+
 		return ok();
 	}
 

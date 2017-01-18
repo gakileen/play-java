@@ -31,3 +31,7 @@ GET     /test/mysql                 controllers.TestController.mysql(gid: Int, u
 GET     /test/mysql_rand            controllers.TestController.mysql_rand(gid: Int, uid: String)
 GET     /test/parallelStream        controllers.TestController.parallelStream()
 GET     /test/future                controllers.TestController.future()
+GET     /test/sleeping              controllers.TestController.sleeping()
+GET     /test/sleeping2             controllers.TestController.sleeping2()
+GET     /test/sleeping3             controllers.TestController.sleeping3()
+GET     /test/sleeping4             controllers.TestController.sleeping4()

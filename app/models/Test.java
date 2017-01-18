@@ -25,6 +25,7 @@ import javax.inject.Inject;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.security.MessageDigest;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
@@ -41,6 +42,8 @@ public class Test {
     private static String TAG = "Test";
 
     @Inject ActorSystem actorSystem;
+
+	private static Random random = new Random();
 
     public static void json() throws Exception {
         String str = "{\"keyword\": [\"纸牌屋\",\"美剧\"],\"tag\": \"美剧\",\"bonus\": 50,\"anon\": 1}";
@@ -400,22 +403,32 @@ public class Test {
         return ret;
     }
 
+    public static void exception() {
+
+
+    	try {
+    		String s = null;
+
+			s.hashCode();
+
+		} catch(IndexOutOfBoundsException e) {
+			System.out.println("in catch IndexOutOfBoundsException");
+		} finally {
+			System.out.println("in finally");
+		}
+
+	}
+
     public static void main(String[] args) throws Exception {
         System.out.println("------start------");
 
-        LinkedList<Integer> list = new LinkedList<>();
-		list.add(0);
-		list.add(1);
-		list.add(2);
-		list.add(3);
-		list.add(4);
-		list.add(5);
+		String s1 = "202FIN20170118001516";
+		String s2 = "20220170113A03CVU";
 
-		int i = list.indexOf(3);
 
-		list = new LinkedList<>(list.subList(i+1,list.size()));
-
-		System.out.println(list);
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		System.out.println(System.currentTimeMillis() - sdf.parse(s1.replaceAll("[a-zA-z]", "").substring(3, 11)).getTime() < 86400000 * 3);
+		System.out.println(System.currentTimeMillis() - sdf.parse(s2.replaceAll("[a-zA-z]", "").substring(3, 11)).getTime() < 86400000 * 3);
 
         System.out.println("------success------");
     }
