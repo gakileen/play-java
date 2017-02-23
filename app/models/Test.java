@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.Block;
 import common.utils.Log;
 import dbconns.MongoDB;
+import io.advantageous.boon.core.Sys;
 import jobs.TestJob;
 import org.ahocorasick.trie.Emit;
 import org.ahocorasick.trie.Trie;
@@ -13,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.fluent.Request;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.asynchttpclient.ws.WebSocket;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.quartz.JobDetail;
@@ -20,15 +22,25 @@ import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
 import org.quartz.impl.StdSchedulerFactory;
+import sun.misc.Unsafe;
+import sun.misc.VM;
+import sun.reflect.Reflection;
 
 import javax.inject.Inject;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.URL;
 import java.security.MessageDigest;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.quartz.CronScheduleBuilder.cronSchedule;
 import static org.quartz.JobBuilder.newJob;
@@ -39,7 +51,7 @@ import static org.quartz.TriggerBuilder.newTrigger;
  */
 public class Test {
 
-    private static String TAG = "Test";
+    private static String TAG = "LauncherTest";
 
     @Inject ActorSystem actorSystem;
 
@@ -116,7 +128,7 @@ public class Test {
 
     public void schedule() {
 
-        System.out.println("Test schedule start...");
+        System.out.println("LauncherTest schedule start...");
 
         actorSystem.scheduler().schedule(
                 scala.concurrent.duration.Duration.create(0, TimeUnit.SECONDS),
@@ -125,7 +137,7 @@ public class Test {
                 actorSystem.dispatcher()
         ) ;
 
-        System.out.println("Test schedule end");
+        System.out.println("LauncherTest schedule end");
     }
 
     public static void quartz() {
@@ -422,13 +434,15 @@ public class Test {
     public static void main(String[] args) throws Exception {
         System.out.println("------start------");
 
-		String s1 = "202FIN20170118001516";
-		String s2 = "20220170113A03CVU";
+        String str = "";
+
+        String[] ss = str.split(":", 2);
+
+        for (String s : ss) {
+            System.out.println(s);
+        }
 
 
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-		System.out.println(System.currentTimeMillis() - sdf.parse(s1.replaceAll("[a-zA-z]", "").substring(3, 11)).getTime() < 86400000 * 3);
-		System.out.println(System.currentTimeMillis() - sdf.parse(s2.replaceAll("[a-zA-z]", "").substring(3, 11)).getTime() < 86400000 * 3);
 
         System.out.println("------success------");
     }
