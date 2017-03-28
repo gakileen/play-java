@@ -34,8 +34,8 @@ import java.net.URL;
 import java.security.MessageDigest;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -431,16 +431,49 @@ public class Test {
 
 	}
 
+    static final int spread(int h) {
+        return (h ^ (h >>> 16)) & 0x7fffffff;
+    }
+
+    static void temp (int concurrencyLevel) {
+        int MAX_SEGMENTS = 65535;
+
+        if (concurrencyLevel > MAX_SEGMENTS)
+            concurrencyLevel = MAX_SEGMENTS;
+
+        // Find power-of-two sizes best matching arguments
+        int sshift = 0;
+        int ssize = 1;
+        while (ssize < concurrencyLevel) {
+            ++sshift;
+            ssize <<= 1;
+        }
+        int segmentShift = 32 - sshift;
+        int segmentMask = ssize - 1;
+
+
+        System.out.println(ssize);
+        System.out.println(sshift);
+        System.out.println(segmentShift);
+        System.out.println(segmentMask);
+    }
+
+
+    public static String digui(int i) {
+
+        int a = i / 10;
+        int b = i % 10;
+
+        if (a == 0) {
+            return b + "";
+        } else {
+            return b + digui(a);
+        }
+    }
+
     public static void main(String[] args) throws Exception {
         System.out.println("------start------");
 
-        String str = "";
-
-        String[] ss = str.split(":", 2);
-
-        for (String s : ss) {
-            System.out.println(s);
-        }
 
 
 

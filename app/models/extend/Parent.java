@@ -5,19 +5,29 @@ package models.extend;
  */
 public class Parent {
 
-    private String pri = "priParent";
-    protected String pro = "proParent";
-    public String pub = "pubParent";
+    private String pri = "parent_pri";
+    protected String pro = "parent_pro";
+    public String pub = "parent_pub";
+
+    Parent(String pro, String pub) {
+
+        System.out.println("===Parent start");
+
+        this.pro = pro;
+        this.pub = pub;
+
+        System.out.println("===Parent end");
+    }
 
     public void get() {
-        System.out.println("Parent start");
+        System.out.println("---parent_get_start");
 
         System.out.println(pri);
         System.out.println(pro);
         System.out.println(pub);
 
 
-        System.out.println("Parent end");
+        System.out.println("---parent_get_end");
     }
 
     public void hello() {
