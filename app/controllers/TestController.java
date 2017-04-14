@@ -18,12 +18,14 @@ import org.bson.Document;
 import play.data.Form;
 import play.data.FormFactory;
 import play.libs.Json;
-import play.mvc.Controller;
 import play.mvc.Result;
 
 import javax.inject.Inject;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletionStage;
@@ -32,7 +34,7 @@ import java.util.concurrent.CompletionStage;
  * Created by acmac on 2016/05/05.
  */
 @Singleton
-public class TestController extends Controller {
+public class TestController extends BaseController {
 
     private static final String TAG = TestController.class.getSimpleName();
 
@@ -232,5 +234,21 @@ public class TestController extends Controller {
 
 		return ok();
 	}
+
+	public Result getSalt() {
+
+        String sessionId = getHeaderString("SessionId");
+
+        MessageDigest md;
+        try {
+            md = MessageDigest.getInstance("MD5");
+            md.update((sessionId + "dewmobilezapya" + sessionId).getBytes());
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            return badRequest();
+        }
+
+        return ok(Arrays.copyOf(md.digest(), 8));
+    }
 
 }

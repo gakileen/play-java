@@ -29,9 +29,13 @@ import sun.reflect.Reflection;
 import javax.inject.Inject;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.InetAddress;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.MessageDigest;
+import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.*;
@@ -471,10 +475,48 @@ public class Test {
         }
     }
 
+    public static byte[] getSaltAndIv() {
+        SecureRandom sr;
+        byte[] salt = new byte[8];
+        try {
+            sr = SecureRandom.getInstance("SHA1PRNG");
+            sr.nextBytes(salt);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return salt;
+    }
+
+    public static void simpleHttp() throws IOException {
+        HttpURLConnection connection = (HttpURLConnection) new URL("http://127.0.0.1:9000/v2/recs/salt?SessionId=100").openConnection();
+        connection.setConnectTimeout(5000);
+        connection.setReadTimeout(5000);
+        connection.setRequestProperty("SessionId", "2");
+
+        connection.connect();
+
+        InputStream inputStream = connection.getInputStream();
+
+        byte[] bytes = new byte[8];
+        inputStream.read(bytes);
+
+        for (byte b : bytes) {
+            System.out.print(b + " ");
+        }
+
+        inputStream.close();
+        connection.disconnect();
+    }
+
     public static void main(String[] args) throws Exception {
         System.out.println("------start------");
 
+        byte[] bs = getSaltAndIv();
+        for (byte b : bs) System.out.println(b);
 
+
+
+        System.out.println(new String(bs));
 
 
         System.out.println("------success------");
