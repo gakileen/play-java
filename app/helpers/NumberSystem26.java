@@ -38,7 +38,10 @@ public class NumberSystem26 {
 //        System.out.println(ToNumberSystem26(2337L));
 //        System.out.println(FromNumberSystem26("CKW"));
 
-        System.out.println(ToNumberSystem26(1092972211L).toLowerCase());
+
+//        System.out.println(ToNumberSystem26(2156L));
+//        System.out.println(FromNumberSystem26("CDX"));
+
     }
 
 }

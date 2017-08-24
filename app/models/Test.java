@@ -4,6 +4,8 @@ import akka.actor.ActorSystem;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.Block;
+import com.sun.tools.javac.util.Convert;
+import common.utils.ApplicationHelper;
 import common.utils.Log;
 import dbconns.MongoDB;
 import io.advantageous.boon.core.Sys;
@@ -39,6 +41,7 @@ import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
@@ -487,7 +490,7 @@ public class Test {
         return salt;
     }
 
-    public static void simpleHttp() throws IOException {
+    public  static void simpleHttp() throws IOException {
         HttpURLConnection connection = (HttpURLConnection) new URL("http://127.0.0.1:9000/v2/recs/salt?SessionId=100").openConnection();
         connection.setConnectTimeout(5000);
         connection.setReadTimeout(5000);
@@ -508,18 +511,114 @@ public class Test {
         connection.disconnect();
     }
 
+    private static final String FILED_ID = "_id";
+    private static final String FILED_PKG = "pkg";
+    private static final String FILED_ICON = "icon";
+    private static final String FILED_URL = "url";
+    private static final String FILED_GPURL = "gpurl";
+    private static final String FILED_SIZE = "size";
+    private static final String FILED_MULTI_LAN = "multi_lan";
+    private static final String FILED_LAN = "lan";
+    private static final String FILED_TITLE = "title";
+    private static final String FILED_DESC = "desc";
+    private static final String FILED_ORDERS = "orders";
+    private static final String FILED_LIMIT_PID = "limit_pid";
+    private static final String FILED_LIMIT_CHN = "limit_chn";
+    private static final String FILED_LIMIT_CC = "limit_cc";
+    private static final String FILED_CT = "ct";
+    private static final String FILED_UT = "ut";
+
+    private static boolean isValidDoc(Document d) {
+        boolean result = d.containsKey(FILED_ID) && d.get(FILED_ID) != null &&
+                d.containsKey(FILED_PKG) && d.get(FILED_PKG) != null &&
+                d.containsKey(FILED_ICON) && d.get(FILED_ICON) != null &&
+                d.containsKey(FILED_URL) && d.get(FILED_URL) != null &&
+                d.containsKey(FILED_GPURL) && d.get(FILED_GPURL) != null &&
+                d.containsKey(FILED_SIZE) && d.get(FILED_SIZE) != null &&
+                d.containsKey(FILED_MULTI_LAN) && d.get(FILED_MULTI_LAN) != null &&
+                d.containsKey(FILED_ORDERS) && d.get(FILED_ORDERS) != null &&
+                d.containsKey(FILED_LIMIT_PID) && d.get(FILED_LIMIT_PID) != null &&
+                d.containsKey(FILED_LIMIT_CHN) && d.get(FILED_LIMIT_CHN) != null &&
+                d.containsKey(FILED_LIMIT_CC) && d.get(FILED_LIMIT_CC) != null;
+
+        if (result) {
+            try {
+                if (((List<Integer>) d.get(FILED_LIMIT_PID)).stream().map(Integer.class::isInstance).filter(a -> !a).count() > 0) {
+                    return false;
+                }
+
+                if (((List<String>) d.get(FILED_LIMIT_CHN)).stream().map(String.class::isInstance).filter(a -> !a).count() > 0) {
+                    return false;
+                }
+
+                if (((List<String>) d.get(FILED_LIMIT_CC)).stream().map(String.class::isInstance).filter(a -> !a).count() > 0) {
+                    return false;
+                }
+
+                List<Document> multiLanList = (List<Document>) d.get(FILED_MULTI_LAN);
+                if (ApplicationHelper.isEmpty(multiLanList)) {
+                    return false;
+                }
+
+                for (Document a : multiLanList) {
+                    boolean r = a.containsKey(FILED_LAN) && a.get(FILED_LAN) != null &&
+                            a.containsKey(FILED_TITLE) && a.get(FILED_TITLE) != null &&
+                            a.containsKey(FILED_DESC) && a.get(FILED_DESC) != null;
+
+                    result = result && r;
+                }
+
+                return result;
+            } catch (Exception e) {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
     public static void main(String[] args) throws Exception {
         System.out.println("------start------");
 
-        byte[] bs = getSaltAndIv();
-        for (byte b : bs) System.out.println(b);
+        String s = "{\"_id\": \"Zapya_Air_Hockey\",\"pkg\": \"com.dewmobile.kuaiya.game.airhockey.play\",\"icon\": \"http://binaries.izapya.com/images/airhockey72.png\",\"url\": \"http://binaries.izapya.com/upload/web/app/aff9660acec9a5a89638b5766dd9c09d-183949.apk\",\"gpurl\": \"https://play.google.com/store/apps/details?id=com.dewmobile.kuaiya.game.airhockey.play\",\"size\": 1985924,\"orders\": 4,\"multi_lan\": [{\"lan\": \"zh_CN\",\"title\": \"快牙冰球\",\"desc\": \"Join your friends in the latest action-packed game available on Zapya!\"},{\"lan\": \"en\",\"title\": \"Zapya Air Hockey\",\"desc\": \"Join your friends in the latest action-packed game available on Zapya!\"}],\"limit_pid\": [],\"limit_chn\": [],\"limit_cc\": []}";
 
+        Document d = Document.parse(s);
 
+        System.out.println(d);
 
-        System.out.println(new String(bs));
-
+        System.out.println(isValidDoc(d));
 
         System.out.println("------success------");
+    }
+
+    public static String byteArrayToHexStr(byte[] byteArray) {
+        if (byteArray == null){
+            return null;
+        }
+        char[] hexArray = "0123456789ABCDEF".toCharArray();
+        char[] hexChars = new char[byteArray.length * 2];
+        for (int j = 0; j < byteArray.length; j++) {
+            int v = byteArray[j] & 0xFF;
+            hexChars[j * 2] = hexArray[v >>> 4];
+            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+        }
+        return new String(hexChars);
+    }
+
+    public static byte[] hexStrToByteArray(String str)
+    {
+        if (str == null) {
+            return null;
+        }
+        if (str.length() == 0) {
+            return new byte[0];
+        }
+        byte[] byteArray = new byte[str.length() / 2];
+        for (int i = 0; i < byteArray.length; i++){
+            String subStr = str.substring(2 * i, 2 * i + 2);
+            byteArray[i] = ((byte)Integer.parseInt(subStr, 16));
+        }
+        return byteArray;
     }
 
     static String setParameter(String sql, String param) {
