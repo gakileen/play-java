@@ -45,7 +45,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -580,15 +582,25 @@ public class Test {
     public static void main(String[] args) throws Exception {
         System.out.println("------start------");
 
-        String s = "{\"_id\": \"Zapya_Air_Hockey\",\"pkg\": \"com.dewmobile.kuaiya.game.airhockey.play\",\"icon\": \"http://binaries.izapya.com/images/airhockey72.png\",\"url\": \"http://binaries.izapya.com/upload/web/app/aff9660acec9a5a89638b5766dd9c09d-183949.apk\",\"gpurl\": \"https://play.google.com/store/apps/details?id=com.dewmobile.kuaiya.game.airhockey.play\",\"size\": 1985924,\"orders\": 4,\"multi_lan\": [{\"lan\": \"zh_CN\",\"title\": \"快牙冰球\",\"desc\": \"Join your friends in the latest action-packed game available on Zapya!\"},{\"lan\": \"en\",\"title\": \"Zapya Air Hockey\",\"desc\": \"Join your friends in the latest action-packed game available on Zapya!\"}],\"limit_pid\": [],\"limit_chn\": [],\"limit_cc\": []}";
-
-        Document d = Document.parse(s);
-
-        System.out.println(d);
-
-        System.out.println(isValidDoc(d));
+        String a = "123321";
+        System.out.println(isTargetStr(a));
 
         System.out.println("------success------");
+    }
+
+    public static boolean isTargetStr(String str) {
+        if (str != null && str.length() > 0) {
+            int len = str.length();
+            for (int i = 0; i <= len / 2; i++) {
+                if (str.charAt(i) != str.charAt(len - 1 - i)) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
     public static String byteArrayToHexStr(byte[] byteArray) {
