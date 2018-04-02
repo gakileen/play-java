@@ -582,8 +582,6 @@ public class Test {
     public static void main(String[] args) throws Exception {
         System.out.println("------start------");
 
-        String a = "123321";
-        System.out.println(isTargetStr(a));
 
         System.out.println("------success------");
     }
